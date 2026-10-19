@@ -1,0 +1,93 @@
+---
+title: "Getting Started with dtaIPDMA"
+author: "Diribsa T. Bedada"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with dtaIPDMA}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
+```
+
+## Purpose
+
+**Robust Statistical Methods for Individual Participant Data Meta-Analysis of Diagnostic Test Accuracy** is the long-term scope of this package.
+The initial version implements Project I distributional diagnostics only.
+
+
+The bivariate GLMM for diagnostic test accuracy meta-analysis commonly assumes
+that study-specific sensitivity and specificity effects follow a bivariate
+normal distribution. Directly applying the classical HZ test to empirical
+Bayes estimates can be affected by unequal study precision and shrinkage.
+
+`dtaIPDMA` implements a weighted statistic that combines:
+
+1. empirical Bayes study effects from the fitted bivariate GLMM;
+2. the fitted between-study covariance matrix; and
+3. study-specific within-study variances derived from each 2-by-2 table.
+
+Because the null distribution of the weighted statistic is not available in
+closed form, inference uses a parametric bootstrap.
+
+## Input data
+
+```{r}
+library(dtaIPDMA)
+dat <- scoff
+head(dat)
+```
+
+The input must contain raw integer counts. Continuity correction is applied
+internally only when calculating within-study variances.
+
+## Run both tests
+
+```{r}
+tests <- dta_hz_test(dat, B = 499, nAGQ = 7, seed = 2026)
+tests$summary
+```
+
+For a preliminary code check, a small `B` may be used. Final analyses should
+use enough bootstrap samples to achieve suitable Monte Carlo precision.
+
+## Inspect the weighted test
+
+```{r}
+print(tests$weighted)
+summary(tests$weighted)
+plot_dta_effects(tests$weighted, type = "density", weighted = TRUE)
+plot_dta_effects(tests$weighted, type = "qq", weighted = TRUE)
+```
+
+The reported `B_effective` is the number of bootstrap datasets for which the
+GLMM and weighted statistic were successfully obtained.
+
+## Parallel bootstrap
+
+On a laptop with eight logical processors, six workers are a sensible choice:
+
+```{r}
+tests <- dta_hz_test(
+  dat, B = 499, nAGQ = 5, seed = 2026,
+  parallel = TRUE, n_cores = 6
+)
+```
+
+## Individual participant data and covariates
+
+For IPD, provide the disease status and index-test result as numeric `0/1`
+variables. Covariates are centred within study before fitting the GLMM.
+
+```{r}
+ipd_tests <- ipd_hz_test(
+  data = ipd_data,
+  study_id = "study_id",
+  disease = "disease",
+  test = "test_result",
+  covariates = c("age", "sex"),
+  B = 499, nAGQ = 7, parallel = TRUE, n_cores = 6, seed = 2026
+)
+```

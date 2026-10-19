@@ -1,0 +1,9 @@
+citHeader("To cite dtaIPDMA in publications, please use:")
+
+bibentry(
+  bibtype = "Manual",
+  title = "dtaIPDMA: Robust Statistical Methods for Individual Participant Data Meta-Analysis of Diagnostic Test Accuracy",
+  author = person("Diribsa T.", "Bedada"),
+  year = "2026",
+  note = "R package version 0.1.0"
+)

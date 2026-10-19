@@ -1,0 +1,35 @@
+Package: dtaIPDMA
+Type: Package
+Title: Robust Statistical Methods for Individual Participant Data Meta-Analysis of Diagnostic Test Accuracy
+Version: 0.1.0
+Authors@R: person("Diribsa T.", "Bedada", email = "dtbedada@uwaterloo.ca",
+    role = c("aut", "cre"))
+Description: Provides robust statistical methods for individual participant
+    data meta-analysis of diagnostic test accuracy. The initial release
+    implements classical and precision-weighted Henze-Zirkler tests for
+    assessing the bivariate normality assumption for empirical Bayes
+    study-specific effects. The weighted test combines estimated between-study
+    heterogeneity with within-study sampling-variance approximations based on
+    diagnostic two-by-two tables, and uses parametric bootstrap calibration
+    under a fitted bivariate normal generalized linear mixed model. Future
+    methodological extensions are planned but not yet implemented.
+License: GPL (>= 3)
+Encoding: UTF-8
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    GLMMadaptive,
+    MASS,
+    Matrix,
+    mvnTest,
+    nlme,
+    parallel,
+    graphics,
+    stats
+Suggests:
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+VignetteBuilder: knitr
+LazyData: true
